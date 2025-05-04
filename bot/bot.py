@@ -17,14 +17,42 @@ levels = ['junior', 'middle', 'senior']
 user_data = {}
 
 def start(update: Update, context: CallbackContext):
+    """Отправляет приветственное сообщение и предлагает выбрать направление."""
+    
+    text = (
+        "👋 Привет! Я помогу тебе подготовиться к техническим собеседованиям.\n\n"
+        "Доступные команды:\n"
+        "/start — начать тестирование\n"
+        "/help — информация о боте\n\n"
+        "Выбери направление, чтобы начать 👇"
+    )
+    
     user_id = update.effective_user.id
     user_data[user_id] = {}
 
     keyboard = [[d] for d in directions]
     reply_markup = ReplyKeyboardMarkup(keyboard, one_time_keyboard=True, resize_keyboard=True)
 
-    update.message.reply_text('Привет! Выбери направление подготовки:', reply_markup=reply_markup)
+    update.message.reply_text(text, reply_markup=reply_markup)
 
+def help_command(update: Update, context: CallbackContext):
+    text = (
+        "ℹ️ О боте:\n\n"
+        "Этот бот поможет вам подготовиться к техническим собеседованиям в следующих направлениях:\n"
+        "- Frontend\n"
+        "- Backend\n"
+        "- Machine Learning и Data Science\n"
+        "- Mobile-разработка\n\n"
+        "Доступные команды:\n"
+        "/start — начать тестирование\n"
+        "/help — показать справку\n\n"
+        "После выбора направления и уровня сложности вам будет предложено 20 случайных вопросов.\n"
+        "В конце теста бот подскажет темы, которые стоит повторить.\n\n"
+        "Если возникла ошибка, напишите /start для нового начала."
+    )
+
+    update.message.reply_text(text)
+    
 def choose_direction(update: Update, context: CallbackContext):
     user_id = update.effective_user.id
     direction = update.message.text
@@ -138,6 +166,7 @@ def main():
     dp = updater.dispatcher
 
     dp.add_handler(CommandHandler('start', start))
+    dp.add_handler(CommandHandler('help', help_command))
     dp.add_handler(MessageHandler(Filters.regex(f"^({'|'.join(directions)})$"), choose_direction))
     dp.add_handler(MessageHandler(Filters.regex(f"^({'|'.join(levels)})$"), choose_level))
     dp.add_handler(CallbackQueryHandler(handle_answer))
