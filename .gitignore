@@ -1,0 +1,11 @@
+# Python
+__pycache__/
+*.pyc
+
+# Environments
+venv/
+tg_bot/
+data/
+
+# VSCode settings
+.vscode/
